@@ -5,6 +5,7 @@ One pointing at a time.
 
 import argparse
 import math
+import os
 
 import h5py
 import numpy as np
@@ -13,8 +14,12 @@ from scipy import interpolate
 # lallement18 => 'stilism_cube.h5' --- returns E(B-V)
 # lallement19 => 'stilism_cube_2.h5' --- returns A0
 
+py_folder = os.path.dirname(os.path.abspath(__file__))
+extmaps_dir = os.path.join(os.path.dirname(py_folder), 'extmaps')
+
 class LallementDustMap(object):
-    map_path = {'18':'stilism_cube.h5','19':'stilism_cube_2.h5'}
+    map_path = {'18':os.path.join(extmaps_dir,'stilism_cube.h5'),
+                '19':os.path.join(extmaps_dir,'stilism_cube_2.h5')}
 
     def __init__(self, version='19', Rv=3.1):
         """Initialize Lallement's dust map.

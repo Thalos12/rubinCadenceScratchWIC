@@ -24,6 +24,9 @@ import matplotlib.pylab as plt
 from matplotlib.ticker import LogLocator
 plt.ion()
 
+py_folder = os.path.dirname(os.path.abspath(__file__))
+extmaps_dir = os.path.join(os.path.dirname(py_folder), 'extmaps')
+
 # Turn the matplotlib version into a float
 MATPLOTLIB_VERSION_FLOAT = \
     float('%s%s' % (matplotlib.__version__[0:3], matplotlib.__version__[3::].replace('.','')))
@@ -33,12 +36,16 @@ class ebv3d(object):
     """Object to hold and manipulate a merged 3d extinction map generated
 by compareExtinctions.py. Also reads in an (nrows, nbins) mask array
 but currently does nothing with it."""
+
+    default_map = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
     
-    def __init__(self, pathMap='merged_ebv3d_nside64.fits', \
-                 Verbose=True):
+    def __init__(self, pathMap=None, Verbose=True):
 
         # path to map
-        self.pathMap = pathMap[:]
+        if pathMap is None:
+            self.pathMap = self.default_map
+        else:
+            self.pathMap = pathMap[:]
 
         # Arrays for the map
         self.hpids = np.array([])
@@ -511,7 +518,7 @@ def getColorbarLimits(cbar=None):
 
 def testReadExt(showExtn=False, sfilt='r', showDeltamag=False, \
                 figName='test_mapDust.png', \
-                pathMap='merged_ebv3d_nside64.fits', norm='log'):
+                pathMap=None, norm='log'):
 
     """Tests whether we can read the extinction map we just created. If
 showExtn, then the extinction at filter sfilt is shown. If showDeltamag, then the quantity (m-M) is plotted, including extinction. pathMap is the path to the E(B-V) vs distance map. Example call:
@@ -520,6 +527,9 @@ showExtn, then the extinction at filter sfilt is shown. If showDeltamag, then th
     figName='testmap_Ar.png')
 
     """
+    if pathMap is None:
+        pathMap = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
+        print("Using the default map at",pathMap)
 
     ebv = ebv3d(pathMap)
     ebv.loadMap()
@@ -612,7 +622,7 @@ showExtn, then the extinction at filter sfilt is shown. If showDeltamag, then th
 def testDeltamags(sfilt='r', dmagOne=13., \
                   figName='test_deltamag.png', \
                   cmap='viridis', norm='linear', \
-                  pathMap='merged_ebv3d_nside64.fits', \
+                  pathMap=None, \
                   dmagVec=np.array([]), testMethod=False, \
                   testFigureMethod=False, testFarDistances=True, \
                   maxDistShow=None):
@@ -636,6 +646,10 @@ delta-mag is found.
     figName='testmap_delta_i_set1.png')
 
     """
+
+    if pathMap is None:
+        pathMap = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
+        print("Using the default map at",pathMap)
 
     ebv = ebv3d(pathMap)
     ebv.loadMap()
@@ -714,16 +728,19 @@ delta-mag is found.
     fig4.suptitle('NSIDE=%i, Filter:%s' % (ebv.nside, sfilt))
     fig4.savefig(figName)
 
-def testShowDistresol(pathMap='merged_ebv3d_nside64.fits'):
-
+def testShowDistresol(pathMap=None):
     """Test our method to show the distance resolution"""
+
+    if pathMap is None:
+        pathMap = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
+        print("Using the default map at",pathMap)
 
     ebv=ebv3d(pathMap)
     ebv.loadMap()
     ebv.showDistanceInterval()
 
 def testGetOneSightline(l=0., b=0., dpc=3000., \
-                            pathMap='merged_ebv3d_nside64.fits', \
+                            pathMap=None, \
                         interpCoo=False, showVsDistance=True):
 
     """Test getting the E(B-V) map at a particular
@@ -782,7 +799,10 @@ def testGetOneSightline(l=0., b=0., dpc=3000., \
     # specified coordinates.
 
     # With all that said, here is the test routine:
-    
+
+    if pathMap is None:
+        pathMap = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
+        print("Using the default map at",pathMap)
     # load the map and compute the E(B-V) at the distance
     ebv = ebv3d(pathMap)
     ebv.loadMap()

@@ -1235,7 +1235,7 @@ def writeExtmap(hpids=np.array([]), dists=np.array([]), \
     hdul.close()
 
 def mergeMaps(sSrch='ebv3d_nside64_*fits', \
-              pathJoined='merged_ebv3d_nside64.fits'):
+              pathJoined=None):
 
     """Given partial healpix maps, merge them into a single all-sky hp
 map. A list of paths matching the search string is constructed, and
@@ -1249,9 +1249,16 @@ individual files.
         print("mergeMaps WARN - no paths match string %s" % (sSrch))
         return
 
+
+    if pathJoined is None:
+        pathJoined = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
+        print("Output path set to",pathMap)
     # ensure the output file doesn't overwrite any of the input files
-    if len(pathJoined) < 4:
-        pathJoined = 'test_mergedmaps.fits'
+    elif len(pathJoined) < 4:
+        pathJoined = os.path.join(extmaps_dir,'test_mergedmaps.fits')
+    
+    if os.path.isfile(pathJoined):
+        raise FileExistsError(pathJoined)
 
     # if the joined path is in the path of files, remove it from the
     # list to consider and prepend "tmp_" to the output path. This
