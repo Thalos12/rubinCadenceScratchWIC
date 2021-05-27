@@ -38,6 +38,8 @@ by compareExtinctions.py. Also reads in an (nrows, nbins) mask array
 but currently does nothing with it."""
 
     default_map = os.path.join(extmaps_dir,'merged_ebv3d_nside64.fits')
+    if not os.access(default_map, os.R_OK):
+        default_map = "%s.gz" % (default_map)
     
     def __init__(self, pathMap=None, Verbose=True):
 
